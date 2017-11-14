@@ -20,7 +20,6 @@
 
 BIN = cpu
 OBJECTS = cpu.o code.o
-HEADERS = cpu.h mask.h
 
 CC = gcc
 
@@ -28,13 +27,19 @@ CC = gcc
 $(BIN) : $(OBJECTS) 
 	$(CC) $^ -o $@
 
-$(BIN) : $(HEADERS)
 
 %.o : %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< 
+
+%.d : %.c
+	$(CC) $(CPPFLAGA) $(CFLAGS) -MM -MT '$(<:%.c=%.o) $@' $< -o $@
+
+deps = $(OBJECTS:%.o=%.d)
+
+include $(deps)
 
 .PHONY : clean
 
 clean:
-	rm -f $(LDFLAGS) $(OBJECTS) $(BIN) *~ \#*
+	rm -f $(LDFLAGS) $(OBJECTS) $(BIN) *~ \#*  $(deps)
 

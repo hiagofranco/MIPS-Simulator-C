@@ -106,4 +106,4 @@ void write_ref_mem(short int, int, int, int);
 
 extern int memory[];
 extern int reg[];
-
+extern int loop;

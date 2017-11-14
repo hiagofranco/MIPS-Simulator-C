@@ -72,20 +72,20 @@ int S_C
 
 // usadas para ativar os sinais de controle. Atuam em SC.
 #define ativa_RegDst			0x0001	   // 0000 0000 0000 0001  usada com |
-#define ativa_RegWrite			0x0002      // 0000 0000 0000 0010  usada com |
-#define ativa_ALUSrcA         	0x0004      // 0000 0000 0000 0100  usada com |
-#define ativa_ALUSrcB0        	0x0008      // 0000 0000 0000 1000  usada com |
-#define ativa_ALUSrcB1        	0x0010      // 0000 0000 0001 0000  usada com |
-#define ativa_ALUOp0          	0x0020      // 0000 0000 0010 0000  usada com |
-#define ativa_ALUOp1          	0x0040      // 0000 0000 0100 0000  usada com |
-#define ativa_PCSource0   		0x0080      // 0000 0000 1000 0000  usada com |
-#define ativa_PCSource1	 		0x0100      // 0000 0001 0000 0000  usada com |
-#define ativa_PCWriteCond		0x0200      // 0000 0010 0000 0000  usada com |
+#define ativa_RegWrite		0x0002      // 0000 0000 0000 0010  usada com |
+#define ativa_ALUSrcA     0x0004      // 0000 0000 0000 0100  usada com |
+#define ativa_ALUSrcB0    0x0008      // 0000 0000 0000 1000  usada com |
+#define ativa_ALUSrcB1    0x0010      // 0000 0000 0001 0000  usada com |
+#define ativa_ALUOp0      0x0020      // 0000 0000 0010 0000  usada com |
+#define ativa_ALUOp1      0x0040      // 0000 0000 0100 0000  usada com |
+#define ativa_PCSource0   0x0080      // 0000 0000 1000 0000  usada com |
+#define ativa_PCSource1	 	0x0100      // 0000 0001 0000 0000  usada com |
+#define ativa_PCWriteCond	0x0200      // 0000 0010 0000 0000  usada com |
 #define ativa_PCWrite			0x0400      // 0000 0100 0000 0000  usada com |
 #define ativa_IorD				0x0800      // 0000 1000 0000 0000  usada com |
 #define ativa_MemRead			0x1000      // 0001 0000 0000 0000  usada com |
-#define ativa_MemWrite			0x2000      // 0010 0000 0000 0000  usada com |
-#define ativa_MemtoReg			0x4000      // 0100 0000 0000 0000  usada com |
+#define ativa_MemWrite		0x2000      // 0010 0000 0000 0000  usada com |
+#define ativa_MemtoReg		0x4000      // 0100 0000 0000 0000  usada com |
 #define ativa_IRWrite			0x8000      // 1000 0000 0000 0000  usada com |
 
 // usadas para desativar os sinais de controle. Atuam em SC
@@ -96,19 +96,19 @@ int S_C
 #define desativa_ALUSrcB1			0xffef      // 1111 1111 1110 1111  usada com &
 #define desativa_ALUOp0				0xffdf      // 1111 1111 1101 1111  usada com &
 #define desativa_ALUOp1				0xffbf      // 1111 1111 1011 1111  usada com &
-#define desativa_PCSource0			0xff7f      // 1111 1111 0111 1111  usada com &
-#define desativa_PCSource1			0xfeff      // 1111 1110 1111 1111  usada com &
-#define desativa_PCWriteCond		0xfdff      // 1111 1101 1111 1111  usada com &
+#define desativa_PCSource0		0xff7f      // 1111 1111 0111 1111  usada com &
+#define desativa_PCSource1		0xfeff      // 1111 1110 1111 1111  usada com &
+#define desativa_PCWriteCond	0xfdff      // 1111 1101 1111 1111  usada com &
 #define desativa_PCWrite			0xfbff      // 1111 1011 1111 1111  usada com &
-#define desativa_IorD				0xf7ff      // 1111 0111 1111 1111  usada com &
+#define desativa_IorD				  0xf7ff      // 1111 0111 1111 1111  usada com &
 #define desativa_MemRead			0xefff      // 1110 1111 1111 1111  usada com &
 #define desativa_MemWrite			0xdfff      // 1101 1111 1111 1111  usada com &
 #define desativa_MemtoReg			0xbfff      // 1011 1111 1111 1111  usada com &
 #define desativa_IRWrite			0x7fff      // 0111 1111 1111 1111  usada com &
 
 // usadas para separar os sinais de controle. Atuam em SC.
-#define separa_RegDst		   0x0001	   // 0000 0000 0000 0001  usada com |
-#define separa_RegWrite		   0x0002      // 0000 0000 0000 0010  usada com |
+#define separa_RegDst		       0x0001	   // 0000 0000 0000 0001  usada com |
+#define separa_RegWrite		     0x0002      // 0000 0000 0000 0010  usada com |
 #define separa_ALUSrcA    	   0x0004      // 0000 0000 0000 0100  usada com |
 #define separa_ALUSrcB0        0x0008      // 0000 0000 0000 1000  usada com |
 #define separa_ALUSrcB1        0x0010      // 0000 0000 0001 0000  usada com |
