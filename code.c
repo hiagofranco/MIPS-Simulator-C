@@ -138,11 +138,28 @@ void write_r_access_memory(short int sc,
                            int *MDRnew,
                            int *IRnew)
 {
+  int operation = IR & separa_cop;
+  operation = operation >> 26;
 
+  //Switch para decidir qual instrucao.
+  /*Nintendo*/switch (operation) {
+    case 0x0: //TIPO - R;
+      reg[separa_rd & IR] = AMUOUT;
+      break;
+    case 0x23: //LW
+      MDRnew = memory[AMUOUT];
+      break;
+    case 0x2b: //SW
+      memory[AMUOUT] = reg[separa_rt & IR];
+      break;
 }
 
 
 void write_ref_mem(short int sc, int IR, int MDR, int ALUOUT)
 {
-
+  int operation = IR & separa_cop;
+  operation = operation >> 26;
+    if(operation ==  0x23){ //LW
+    reg[IR & separa_rt] = MDR;
+    }
 }
