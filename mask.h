@@ -55,12 +55,12 @@ int S_C
 
 // mascaras usadas para separar os campos dentro da instrucao
 //						 			       31  26 25 21 20 16 15 11 10  6 5    0
-#define separa_cop			0xfc000000	// 111111 00000 00000 00000 00000 000000  usada com &
-#define separa_rs			0x03e00000	// 000000 11111 00000 00000 00000 000000  usada com &
-#define separa_rt			0x001f0000	// 000000 00000 11111 00000 00000 000000  usada com &
-#define separa_rd           0x0000f800	// 000000 00000 00000 11111 00000 000000  usada com &
-#define separa_cfuncao		0x0000003f	// 000000 00000 00000 00000 00000 111111  usada com &
-#define separa_imediato     0x0000ffff	// 000000 00000 00000   1111111111111111  usada com &
+#define separa_cop			     0xfc000000	// 111111 00000 00000 00000 00000 000000  usada com &
+#define separa_rs			       0x03e00000	// 000000 11111 00000 00000 00000 000000  usada com &
+#define separa_rt			       0x001f0000	// 000000 00000 11111 00000 00000 000000  usada com &
+#define separa_rd            0x0000f800	// 000000 00000 00000 11111 00000 000000  usada com &
+#define separa_cfuncao		   0x0000003f	// 000000 00000 00000 00000 00000 111111  usada com &
+#define separa_imediato      0x0000ffff	// 000000 00000 00000   1111111111111111  usada com &
 #define separa_endereco_jump 0x03ffffff // 000000     11111111111111111111111111  usada com &
 
 // usada para eliminar os 2 bits mais significativos do Campo Funcao.

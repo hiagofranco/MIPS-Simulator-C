@@ -57,6 +57,9 @@ int alu (int a, int b, char alu_op, int *result_alu, char *zero, char *overflow)
 
 void control_unit(int IR, short int *sc)
 {
+  // Aqui temos o primeiro estado.
+  if(IR == -1) *sc = 0b1001010000001000;
+  else if(IR == )
 
 }
 
@@ -69,7 +72,6 @@ void instruction_fetch(short int sc,
                        int* MDRnew)
 {
   char zero, overflow;
-  control_unit(IR, &sc);
   *IRnew = memory[PC];
   alu(PC, 4, ativa_soma, &ALUOUT, &zero, &overflow);
   *PCnew = ALUOUT;
@@ -85,7 +87,6 @@ void decode_register(short int sc,
                      int *ALUOUTnew)
 {
   char zero, overflow;
-  control_unit(IR, &sc);
   *Anew = reg[separa_rs & IR];
   *Bnew = reg[separa_rt & IR];
   //*ALUOUTnew = PC + (IR & separa_imediato) << 2;
@@ -108,7 +109,7 @@ void exec_calc_end_branch(short int sc,
   os menos significativos */
   char zero, overflow;
   int operation = IR & separa_cop;
-  operation = operation >> 26;
+  operation >>= 26;
 
   //Switch para decidir qual instrucao.
   /*Nintendo*/switch (operation) {
@@ -122,7 +123,8 @@ void exec_calc_end_branch(short int sc,
       alu(A, (IR & separa_imediato), ativa_soma, ALUOUTnew, &zero, &overflow);
       break;
     case 0x4: //BEQ
-      if(A == B) *PCnew = *ALUOUTnew;
+      alu(A, B, ativa_subtracao, ALUOUTnew, &zero, &overflow);
+      if(zero) *PCnew = *ALUOUTnew;
       break;
     case 0x2: //Jump
       alu(PC & separa_4bits_PC, (IR & separa_endereco_jump) << 2, ativa_or, PCNew, &zero, &overflow);
@@ -133,33 +135,34 @@ void exec_calc_end_branch(short int sc,
 void write_r_access_memory(short int sc,
                            int IR,
                            int MDR,
-                           int AMUOUT,
+                           int ALUOUT,
                            int PC,
                            int *MDRnew,
                            int *IRnew)
 {
   int operation = IR & separa_cop;
-  operation = operation >> 26;
+  operation >>= 26;
 
   //Switch para decidir qual instrucao.
-  /*Nintendo*/switch (operation) {
+  switch (operation) {
     case 0x0: //TIPO - R;
-      reg[separa_rd & IR] = AMUOUT;
+      reg[separa_rd & IR] = ALUOUT;
       break;
     case 0x23: //LW
-      MDRnew = memory[AMUOUT];
+      MDRnew = memory[ALUOUT];
       break;
     case 0x2b: //SW
-      memory[AMUOUT] = reg[separa_rt & IR];
+      memory[ALUOUT] = reg[separa_rt & IR];
       break;
+    }
 }
 
 
 void write_ref_mem(short int sc, int IR, int MDR, int ALUOUT)
 {
   int operation = IR & separa_cop;
-  operation = operation >> 26;
-    if(operation ==  0x23){ //LW
+  operation >>= 26;
+    if(operation ==  0x23) { //LW
     reg[IR & separa_rt] = MDR;
-    }
+  }
 }
