@@ -27,7 +27,7 @@
 /* Students, you are required to implemented the functions bellow.
    Please, refere to cpu.h for further information. */
 
-int alu (int a, int b, char alu_op, int *result_alu, char *zero, char *overflow)
+void alu (int a, int b, char alu_op, int *result_alu, char *zero, char *overflow)
 {
   /* Operacao usada para separa os 4 ultimos bits de alu_op */
   char C_ULA = alu_op & separa_controle_ula;
@@ -51,15 +51,88 @@ int alu (int a, int b, char alu_op, int *result_alu, char *zero, char *overflow)
       break;
   }
 
-  if(*result_ula == 0) *zero = 1;
-  return 0;
+  if(*result_ula == 0) *zero = ativa_bit_zero;
+  else *zero = desativa_bit_zero;
 }
 
 void control_unit(int IR, short int *sc)
 {
   // Aqui temos o primeiro estado.
-  if(IR == -1) *sc = 0b1001010000001000;
-  else if(IR == )
+  if(IR == -1) *sc = 0b1001010000001000; //vai para o estado 0
+  else{
+    int operation = IR & separa_cop;
+    operation >>= 26;
+
+    if(*sc == 0b1001010000001000){ //se estado 0, vai para o 1
+      *sc = 0b0000000000011000;
+    }
+    else{
+      switch(operation){
+        case 0x0: //TIPO - R;
+          switch(*sc){
+            case(0b0000000000011000): //se estado 1, vai para o 6
+              *sc = 0b0000000001000100;
+              break;
+            case(0b0000000001000100): //se estado 6, vai para o 7
+              *sc = 0b0000000000000011;
+              break;
+            case(0b0000000000000011): //se estado 7, vai para o 0
+              *sc = 0b1001010000001000;
+              break;
+          }
+          break;
+        case 0x23: //LW
+          switch(*sc){
+            case(0b0000000000011000): //se estado 1, vai para o 2
+              *sc = 0b0000000000010100;
+              break;
+            case(0b0000000000010100): //se estado 2, vai para o 3
+              *sc = 0b0001100000000000;
+              break;
+            case(0b0001100000000000): //se estado 3, vai para o 4
+              *sc = 0b0100000000000010;
+              break;
+            case(0b01000000000000010): //se estado 4, vai para o 0
+              *sc = 0b1001010000001000;
+              break;
+          }
+          break;
+          case 0x2b: //SW
+            switch(*sc){
+              case(0b0000000000011000): //se estado 1, vai para o 2
+                *sc = 0b0000000000010100;
+                break;
+              case(0b0000000000010100): //se estado 2, vai para o 5
+                *sc = 0b0000100000000010;
+                break;
+              case(0b0000100000000010): //se estado 5, vai para o 0
+                *sc = 0b1001010000001000;
+                break;
+            }
+            break;
+          case 0x4: //BEQ
+            switch(*sc){
+              case(0b0000000000011000): //se estado 1, vai para o 8
+                *sc = 0b0000001010100100;
+                break;
+              case(0b0000001010100100): //se estado 8, vai para o 0
+                *sc = 0b1001010000001000;
+                break;
+            }
+            break;
+          case 0x2: //Jump
+            switch(*sc){
+              case(0b0000000000011000): //se estado 1, vai para o 9
+                *sc = 0b0000010010000000;
+                break;
+              case(0b0000010010000000): //se estado 9, vai para o 0
+                *sc = 0b1001010000001000;
+                break;
+            }
+            break;
+      }
+    }
+  }
 
 }
 
@@ -71,10 +144,14 @@ void instruction_fetch(short int sc,
                        int* IRnew,
                        int* MDRnew)
 {
-  char zero, overflow;
-  *IRnew = memory[PC];
-  alu(PC, 4, ativa_soma, &ALUOUT, &zero, &overflow);
-  *PCnew = ALUOUT;
+  if(sc == 0b1001010000001000){
+    char zero, overflow;
+    *IRnew = memory[PC];
+    alu(PC, 4, ativa_soma, &ALUOUT, &zero, &overflow);
+    *PCnew = ALUOUT;
+    *MDRnew = memory[PC];
+    if(*IRnew == 0) loop = 0;
+  }
 }
 
 void decode_register(short int sc,
@@ -86,14 +163,16 @@ void decode_register(short int sc,
                      int *Bnew,
                      int *ALUOUTnew)
 {
-  char zero, overflow;
-  *Anew = reg[separa_rs & IR];
-  *Bnew = reg[separa_rt & IR];
-  //*ALUOUTnew = PC + (IR & separa_imediato) << 2;
-  if((IR & separa_imediato) & 0x00008000) {
-    int aux = (IR & separa_imediato) | 0xffff0000;
+  if(sc == 0b0000000000011000){
+    char zero, overflow;
+    *Anew = reg[separa_rs & IR];
+    *Bnew = reg[separa_rt & IR];
+    //*ALUOUTnew = PC + (IR & separa_imediato) << 2;
+    if((IR & separa_imediato) & 0x00008000) {
+      int aux = (IR & separa_imediato) | 0xffff0000;
+    }
+    alu(PC, aux << 2, ativa_soma, ALUOUTnew, &zero, &overflow);
   }
-  alu(PC, aux << 2, ativa_soma, ALUOUTnew, &zero, &overflow);
 }
 
 void exec_calc_end_branch(short int sc,
@@ -114,19 +193,25 @@ void exec_calc_end_branch(short int sc,
   //Switch para decidir qual instrucao.
   /*Nintendo*/switch (operation) {
     case 0x0: //TIPO - R;
+      if(sc == 0b0000000001000100)
       alu(A, B, (IR & separa_cfuncao), ALUOUTnew, &zero, &overflow);
       break;
     case 0x23: //LW
+      if(sc == 0b0000000000010100)
       alu(A, (IR & separa_imediato), ativa_soma, ALUOUTnew, &zero, &overflow);
       break;
     case 0x2b: //SW
+      if(sc == 0b0000000000010100)
       alu(A, (IR & separa_imediato), ativa_soma, ALUOUTnew, &zero, &overflow);
       break;
     case 0x4: //BEQ
-      alu(A, B, ativa_subtracao, ALUOUTnew, &zero, &overflow);
-      if(zero) *PCnew = *ALUOUTnew;
+      if(0b0000001010100100){
+        alu(A, B, ativa_subtracao, ALUOUTnew, &zero, &overflow);
+        if(zero) *PCnew = *ALUOUTnew;
+      }
       break;
     case 0x2: //Jump
+      if(sc == 0b0000010010000000)
       alu(PC & separa_4bits_PC, (IR & separa_endereco_jump) << 2, ativa_or, PCNew, &zero, &overflow);
       break;
   }
@@ -146,13 +231,16 @@ void write_r_access_memory(short int sc,
   //Switch para decidir qual instrucao.
   switch (operation) {
     case 0x0: //TIPO - R;
-      reg[separa_rd & IR] = ALUOUT;
+      if(sc == 0b0000000000000011)
+      reg[(separa_rd & IR)]  = ALUOUT;
       break;
     case 0x23: //LW
+      if(sc == 0b0001100000000000)
       MDRnew = memory[ALUOUT];
       break;
     case 0x2b: //SW
-      memory[ALUOUT] = reg[separa_rt & IR];
+      if(0b0000100000000010)
+      memory[ALUOUT] = reg[(separa_rt & IR)];
       break;
     }
 }
@@ -163,6 +251,7 @@ void write_ref_mem(short int sc, int IR, int MDR, int ALUOUT)
   int operation = IR & separa_cop;
   operation >>= 26;
     if(operation ==  0x23) { //LW
-    reg[IR & separa_rt] = MDR;
-  }
+      if(sc == 0b01000000000000010)
+        reg[(IR & separa_rt)] = MDR;
+    }
 }
