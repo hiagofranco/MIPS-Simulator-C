@@ -18,8 +18,13 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*GRUPO:
+  Hiago de Franco Moreira  n USP:9771289
+  Leonardo Sensiate        n USP:9771571
+  Mateus Castilho Leite    n USP:9771550
+  Vinicius Nakasone Dilda  n USP:9771612
+*/
 
-/* After you have implemented your functions, you may safely remove these lines. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "mask.h"		/* Useful masks; customize at you please. */
@@ -71,58 +76,51 @@ int alu(  int a,
 //função responsável por nos dar o alu_op que será passado para a ula
 char controle_alu(int IR, int sc)
 {
-    switch(((sc & separa_ALUOp0) | (sc & separa_ALUOp1)) >> 5)
-    {
-        //Operações do tipo LW e SW
-        case 0x0:
-            return 0b0010;
-            break;
-        //Operação do tipo Branch
-        case 0x1:
-            return 0b0110;
-            break;
-        //Operação do Tipo-R
-        case 0x2:
-            switch(IR & 0b1111)
-            {
-                //Código para uma ADD
-                case 0b0000:
-                    return 0b0010;
-                    break;
+    int cod = ((sc & separa_ALUOp0) | (sc & separa_ALUOp1)) >> 5;
 
-                //Código para uma SUB
-                case 0b0010:
-                    return 0b0110;
-                    break;
-                //Código para uma AND
-                case 0b0100:
-                    return 0b0000;
-                    break;
-                //Código para uma OR
-                case 0b0101:
-                    return 0b0001;
-                    break;
-                //Código para uma SLT
-                case 0b1010:
-                    return 0b0111;
-                    break;
-            }
-            break;
-        //Operação do Tipo-R
-        case 0x3:
-          switch(IR & 0b1111)
-          {
-              //Código para uma SUB
-              case 0b0010:
-                return 0b0110;
-                break;
-              //Código para uma SLT
-              case 0b1010:
-                return 0b0111;
-                break;
-          }
-          break;
+    //Operações do tipo LW e SW
+    if(cod == 0x0)
+        return 0b0010;
+
+    //Operação do tipo Branch
+    if(cod == 0x1)
+        return 0b0110;
+
+    //Operação do Tipo-R
+    if(cod == 0x2){
+      int funct = (IR & 0b1111);
+          //Código para uma ADD
+          if(funct == 0b0000)
+              return 0b0010;
+
+          //Código para uma SUB
+          if(funct == 0b0010)
+              return 0b0110;
+
+          //Código para uma AND
+          if(funct == 0b0100)
+              return 0b0000;
+
+          //Código para uma OR
+          if(funct == 0b0101)
+              return 0b0001;
+
+          //Código para uma SLT
+          if(funct == 0b1010)
+              return 0b0111;
     }
+    //Operação do Tipo-R
+    if(cod == 0x3){
+      int funct = (IR & 0b1111);
+          //Código para uma SUB
+          if(funct == 0b0010)
+            return 0b0110;
+
+          //Código para uma SLT
+          if(funct == 0b1010)
+            return 0b0111;
+    }
+
 }
 
 void control_unit(int IR, short int *sc)
